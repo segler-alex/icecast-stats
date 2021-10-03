@@ -47,7 +47,6 @@ mod icecast_source;
 
 use reqwest::blocking::get;
 use std::error::Error;
-use url::ParseError;
 pub use url::Url;
 
 pub use crate::icecast_stats::IcecastStats;
@@ -63,25 +62,12 @@ pub use crate::icecast_source::IcecastStatsSource;
 /// 
 /// let url_str = "https://stream.example.com:8000/somestream";
 /// let url = Url::parse(url_str).unwrap();
-/// let stats_url = generate_icecast_stats_url(url).unwrap();
+/// let stats_url = generate_icecast_stats_url(url);
 /// assert!(stats_url.to_string().eq("https://stream.example.com:8000/status-json.xsl"));
 /// ```
-pub fn generate_icecast_stats_url(base: Url) -> Result<Url, Box<dyn Error>> {
-    let host: String = base.host().ok_or(ParseError::EmptyHost)?.to_string();
-    let newu = match base.scheme() {
-        "http" => Url::parse(&format!(
-            "http://{hostname}:{port}/status-json.xsl",
-            hostname = host,
-            port = base.port().unwrap_or(80)
-        )),
-        "https" => Url::parse(&format!(
-            "https://{hostname}:{port}/status-json.xsl",
-            hostname = host,
-            port = base.port().unwrap_or(443)
-        )),
-        _ => Err(ParseError::EmptyHost),
-    }?;
-    Ok(newu)
+pub fn generate_icecast_stats_url(mut base: Url) -> Url {
+    base.set_path("/status-json.xsl");
+    base
 }
 
 /// Fetch icecast status information from server
@@ -100,7 +86,7 @@ pub fn generate_icecast_stats_url(base: Url) -> Result<Url, Box<dyn Error>> {
 /// ```
 pub fn fetch(url: &str) -> Result<IcecastStats, Box<dyn Error>> {
     let base_url = Url::parse(url)?;
-    let url = generate_icecast_stats_url(base_url)?;
+    let url = generate_icecast_stats_url(base_url);
     let resp = get(url.to_string())?;
     let j: icecast_stats::IcecastStatsRoot = resp.json()?;
     Ok(j.icestats)
