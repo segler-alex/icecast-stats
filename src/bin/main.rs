@@ -9,6 +9,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
     if args.len() != 2 {
         println!("url parameter expected");
+        std::process::exit(1);
     } else {
         println!("* Parsing arg as url '{}'", args[1]);
         let base_url = Url::parse(&args[1])?;

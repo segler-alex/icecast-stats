@@ -46,7 +46,6 @@ mod icecast_stats;
 mod icecast_source;
 
 use reqwest::blocking::get;
-use std::error::Error;
 pub use url::Url;
 
 pub use crate::icecast_stats::IcecastStats;
@@ -84,7 +83,7 @@ pub fn generate_icecast_stats_url(mut base: Url) -> Url {
 /// let url_str = "https://stream.example.com:8000/somestream";
 /// let stats = fetch(url_str).unwrap();
 /// ```
-pub fn fetch(url: &str) -> Result<IcecastStats, Box<dyn Error>> {
+pub fn fetch(url: &str) -> Result<IcecastStats, Box<dyn std::error::Error + Send + Sync>> {
     let base_url = Url::parse(url)?;
     let url = generate_icecast_stats_url(base_url);
     let resp = get(url.to_string())?;
