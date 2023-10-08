@@ -1,3 +1,6 @@
+# THIS PROJECT MOVED TO GITLAB
+[https://gitlab.com/radiobrowser/libraries/icecast-stats](https://gitlab.com/radiobrowser/libraries/icecast-stats)
+
 # Icecast Server Status
 Decode server status from an [icecast server](https://icecast.org/docs/icecast-trunk/server_stats/).
 
